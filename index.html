@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>町家の日 AR（完成版）</title>
+    <title>町家の日 AR（4ターゲット対応版）</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
@@ -10,7 +10,7 @@
       /* 全体のフォント設定 */
       body { margin: 0; overflow: hidden; font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif; }
 
-      /* ▼▼▼ 待機画面 ▼▼▼ */
+      /* 待機画面 */
       #loading {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background-color: #1a1a1a; z-index: 99999;
@@ -21,7 +21,7 @@
       .loader { border: 2px solid rgba(255,255,255,0.1); border-left-color: #ffffff; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
       @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-      /* ▼▼▼ フッター（文字切り替えアニメーション） ▼▼▼ */
+      /* フッター（文字切り替えアニメーション） */
       #footer-frame {
         position: fixed; bottom: 0; left: 0; width: 100%; height: 10%;
         background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); 
@@ -29,83 +29,38 @@
         display: flex; justify-content: center; align-items: center;
         z-index: 9999;
         pointer-events: auto; cursor: pointer; transition: background 0.3s;
-        overflow: hidden; /* 文字のはみ出し防止 */
+        overflow: hidden;
       }
       #footer-frame:hover { background: rgba(50, 50, 50, 0.8); }
 
-      /* 文字を重ねて配置するためのコンテナ */
       .footer-text-container {
-        position: relative;
-        width: 100%;
-        height: 100%;
+        position: relative; width: 100%; height: 100%;
         display: flex; justify-content: center; align-items: center;
       }
-
-      /* 切り替わる2つの文字の共通設定 */
       .f-text {
-        position: absolute;
-        color: #ffffff;
-        font-family: "Helvetica Neue", Arial, sans-serif;
-        font-size: 12px;
-        letter-spacing: 1px;
-        opacity: 0; /* 最初は透明 */
-        width: 100%; text-align: center;
-        transition: opacity 1s ease-in-out; /* ふんわり切り替える */
+        position: absolute; color: #ffffff;
+        font-family: "Helvetica Neue", Arial, sans-serif; font-size: 12px; letter-spacing: 1px;
+        opacity: 0; width: 100%; text-align: center; transition: opacity 1s ease-in-out;
       }
-
-      /* アニメーションの定義（合計8秒サイクル） */
-      /* 1つ目の文字：0-3秒表示 */
       #ft-1 { animation: textCycle1 8s infinite; }
-      /* 2つ目の文字：4-7秒表示 */
       #ft-2 { animation: textCycle2 8s infinite; }
+      @keyframes textCycle1 { 0%, 45% { opacity: 1; transform: translateY(0); } 50%, 100% { opacity: 0; transform: translateY(-5px); } }
+      @keyframes textCycle2 { 0%, 45% { opacity: 0; transform: translateY(5px); } 50%, 95% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(-5px); } }
 
-      @keyframes textCycle1 {
-        0%, 45% { opacity: 1; transform: translateY(0); }
-        50%, 100% { opacity: 0; transform: translateY(-5px); }
-      }
-      @keyframes textCycle2 {
-        0%, 45% { opacity: 0; transform: translateY(5px); }
-        50%, 95% { opacity: 1; transform: translateY(0); }
-        100% { opacity: 0; transform: translateY(-5px); }
-      }
-
-      /* ▼▼▼ 外観用の演出：エンドロール ▼▼▼ */
+      /* 外観用の演出：エンドロール */
       #outside-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        pointer-events: none; z-index: 8888;
-        display: none; overflow: hidden;
+        pointer-events: none; z-index: 8888; display: none; overflow: hidden;
       }
-      
-      /* エンドロールのコンテンツ */
       #credit-roll-content {
-        position: absolute;
-        width: 100%;
-        text-align: center;
-        color: white;
-        text-shadow: 0 2px 10px rgba(0,0,0,1);
-        bottom: -150%; /* 初期位置 */
-        opacity: 0;
+        position: absolute; width: 100%; text-align: center; color: white;
+        text-shadow: 0 2px 10px rgba(0,0,0,1); bottom: -150%; opacity: 0;
       }
-
-      /* アニメーション用クラス（JSで付け外しする） */
-      /* 25秒かけて下から上に流れる */
-      .animate-roll {
-        animation: rollUp 25s linear forwards;
-      }
-
-      @keyframes rollUp {
-        0% { bottom: -150%; opacity: 0; }
-        5% { opacity: 1; }
-        90% { opacity: 1; }
-        100% { bottom: 100%; opacity: 0; }
-      }
-
+      .animate-roll { animation: rollUp 25s linear forwards; }
+      @keyframes rollUp { 0% { bottom: -150%; opacity: 0; } 5% { opacity: 1; } 90% { opacity: 1; } 100% { bottom: 100%; opacity: 0; } }
       .credit-section { font-size: 14px; margin-top: 60px; opacity: 0.7; letter-spacing: 3px; text-transform: uppercase; }
       .credit-name { font-size: 26px; margin-top: 15px; font-weight: bold; letter-spacing: 5px; }
-      .credit-logo {
-        margin-top: 80px; width: 180px; height: auto;
-        filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8));
-      }
+      .credit-logo { margin-top: 80px; width: 180px; height: auto; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.8)); }
     </style>
   </head>
   <body>
@@ -124,20 +79,16 @@
 
     <div id="outside-overlay">
       <div id="credit-roll-content">
-        
+        <div class="credit-section">作成者</div>
+        <div class="credit-name">小椋 聡介</div>
         <div class="credit-section">Presented by</div>
         <div class="credit-name">Ogura Sousuke</div>
-        <div class="credit-section">do u?</div>
-        <div class="credit-name">ii kanji desho?</div>
-        <div class="credit-section">kore ha mou</div>
-        <div class="credit-name">min na happy dane!</div>
-
         <img src="./logo.png" class="credit-logo" alt="GPM CLoVER Logo">
       </div>
     </div>
 
     <a-scene 
-      mindar-image="imageTargetSrc: ./targets.mind; uiError:yes; uiLoading:no;" 
+      mindar-image="imageTargetSrc: ./targets-2.mind; uiError:yes; uiLoading:no;" 
       color-space="sRGB" 
       renderer="colorManagement: true, physicallyCorrectLights" 
       vr-mode-ui="enabled: false" 
@@ -171,6 +122,26 @@
       <a-entity id="target-outside" mindar-image-target="targetIndex: 2">
       </a-entity>
 
+      <a-entity mindar-image-target="targetIndex: 3">
+        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 12000; loop: true; easing: linear">
+            
+            <a-entity position="0 0 0.8">
+                <a-text value="GPMの小椋です。\n今後ともどうぞよろしくお願い申し上げます。"
+                        font="serif" align="center" color="black" position="0.02 -0.02 -0.01" scale="0.7 0.7 0.7" opacity="0.6"></a-text>
+                <a-text value="GPMの小椋です。\n今後ともどうぞよろしくお願い申し上げます。"
+                        font="serif" align="center" color="#FFD700" position="0 0 0" scale="0.7 0.7 0.7"></a-text>
+            </a-entity>
+
+            <a-entity position="0 0 -0.8" rotation="0 180 0">
+                <a-text value="GPMの小椋です。\n今後ともどうぞよろしくお願い申し上げます。"
+                        font="serif" align="center" color="black" position="0.02 -0.02 -0.01" scale="0.7 0.7 0.7" opacity="0.6"></a-text>
+                <a-text value="GPMの小椋です。\n今後ともどうぞよろしくお願い申し上げます。"
+                        font="serif" align="center" color="#FFD700" position="0 0 0" scale="0.7 0.7 0.7"></a-text>
+            </a-entity>
+
+        </a-entity>
+      </a-entity>
+
     </a-scene>
 
     <script>
@@ -183,7 +154,7 @@
       const creditContent = document.getElementById('credit-roll-content');
       const sceneEl = document.querySelector('a-scene');
 
-      let rollTimer = null; // 2秒待機用のタイマー
+      let rollTimer = null;
 
       // 読み込み完了時
       sceneEl.addEventListener('arReady', () => {
@@ -194,7 +165,7 @@
       });
       setTimeout(() => { if(loadingDiv.style.display !== 'none') loadingDiv.style.display = 'none'; }, 10000);
 
-      // ▼ フッターリンク（クリックでショップへ）
+      // フッターリンク
       footerFrame.addEventListener('click', () => {
         window.open('https://lykke-hygge-2.myshopify.com/', '_blank'); 
       });
@@ -203,37 +174,19 @@
       targetPop2.addEventListener('targetFound', () => { videoPop2.play(); });
       targetPop2.addEventListener('targetLost', () => { videoPop2.pause(); });
 
-      // ▼▼▼ エンドロール制御（2秒待機ループシステム） ▼▼▼
-      
-      // アニメーションを開始する関数
+      // エンドロール制御
       function startRoll() {
-        // クラスを一旦消してリセット（再描画させる）
         creditContent.classList.remove('animate-roll');
-        void creditContent.offsetWidth; // リフロー（強制再描画）
-        
-        // 2秒待ってからクラスを付与＝スタート
-        rollTimer = setTimeout(() => {
-          creditContent.classList.add('animate-roll');
-        }, 2000);
+        void creditContent.offsetWidth;
+        rollTimer = setTimeout(() => { creditContent.classList.add('animate-roll'); }, 2000);
       }
+      creditContent.addEventListener('animationend', () => { startRoll(); });
 
-      // 1回のアニメーションが終わった時の処理
-      creditContent.addEventListener('animationend', () => {
-        // 終わったら次のループへ（startRollを呼ぶと中でまた2秒待ってくれる）
-        startRoll();
-      });
-
-      // 外観を認識した時
       targetOutside.addEventListener('targetFound', () => {
-        outsideOverlay.style.display = 'block';
-        startRoll(); // 最初の開始（2秒待ちます）
+        outsideOverlay.style.display = 'block'; startRoll();
       });
-
-      // 外観を見失った時
       targetOutside.addEventListener('targetLost', () => {
-        outsideOverlay.style.display = 'none';
-        creditContent.classList.remove('animate-roll'); // 止める
-        if (rollTimer) clearTimeout(rollTimer); // 待機中ならキャンセル
+        outsideOverlay.style.display = 'none'; creditContent.classList.remove('animate-roll'); if (rollTimer) clearTimeout(rollTimer);
       });
 
       // 自動リサイズ関数
