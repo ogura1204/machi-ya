@@ -114,7 +114,10 @@
                   animation__disappear="property: scale; to: 0 0 0; dur: 500; easing: easeInQuad; startEvents: disappear">
             
             <a-image src="#img-magic-circle" width="2" height="2" opacity="0.8"
-                     animation="property: rotation; to: 0 0 360; dur: 60000; loop: true; easing: linear"></a-image>
+                     animation="property: rotation; to: 0 0 -360; dur: 60000; loop: true; easing: linear"></a-image>
+            
+            <a-entity id="circular-text-ring" animation="property: rotation; to: 0 0 360; dur: 40000; loop: true; easing: linear">
+            </a-entity>
 
         </a-entity>
       </a-entity>
@@ -133,6 +136,7 @@
       
       const targetCard = document.getElementById('target-card');
       const magicCircle = document.getElementById('magic-circle-container');
+      const textRing = document.getElementById('circular-text-ring'); // 文字を入れるコンテナ
       
       const sceneEl = document.querySelector('a-scene');
 
@@ -143,8 +147,43 @@
         setTimeout(() => { loadingDiv.style.display = 'none'; }, 1000);
         resizeElement('ar-image-1', 'img-pers-1');
         resizeElement('ar-video-1', 'vid-pop2');
+        
+        // ▼▼▼ ここで円形テキストを生成します ▼▼▼
+        createCircularText();
       });
       setTimeout(() => { if(loadingDiv.style.display !== 'none') loadingDiv.style.display = 'none'; }, 10000);
+
+      // ▼▼▼ 円形テキスト生成関数 ▼▼▼
+      function createCircularText() {
+        // 表示したい文字（最後にスペースを入れるとつながりが綺麗になります）
+        const text = "We look forward to working with you. ";
+        const radius = 1.35; // 文字を配置する円の半径（魔法陣の外側）
+        const totalChars = text.length;
+        const angleStep = 360 / totalChars; // 1文字あたりの角度
+
+        for (let i = 0; i < totalChars; i++) {
+          const char = text[i];
+          const angle = i * angleStep;
+          
+          // 1文字を入れる親エンティティ（回転担当）
+          const pivot = document.createElement('a-entity');
+          // Z軸で回転させて角度をつける（マイナスにすると時計回り配置）
+          pivot.setAttribute('rotation', `0 0 ${-angle}`);
+          
+          // 文字本体（位置担当）
+          const textEl = document.createElement('a-text');
+          textEl.setAttribute('value', char);
+          textEl.setAttribute('align', 'center');
+          textEl.setAttribute('color', 'white');
+          textEl.setAttribute('width', '5'); // 文字の大きさ
+          // Y軸方向に半径分だけずらす（これで円周上に配置される）
+          textEl.setAttribute('position', `0 ${radius} 0`);
+          
+          // 組み立て
+          pivot.appendChild(textEl);
+          textRing.appendChild(pivot);
+        }
+      }
 
       footerFrame.addEventListener('click', () => {
         window.open('https://lykke-hygge-2.myshopify.com/', '_blank'); 
@@ -173,7 +212,6 @@
       targetCard.addEventListener('targetFound', () => {
         magicCircle.emit('appear');
       });
-      
       targetCard.addEventListener('targetLost', () => {
         magicCircle.emit('disappear');
       });
