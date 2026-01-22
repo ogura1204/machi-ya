@@ -2,24 +2,77 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>町家の日 AR</title>
+    <title>町家の日 AR（デザイン強化版）</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-      body { margin: 0; overflow: hidden; font-family: serif; }
+      /* 基本設定 */
+      body { margin: 0; overflow: hidden; font-family: "Times New Roman", "YuMincho", "Hiragino Mincho ProN", serif; }
 
-      /* 読み込み中表示 */
+      /* ▼▼▼ 1. オシャレな待機画面 ▼▼▼ */
       #loading {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-        background: rgba(0,0,0,0.8); z-index: 99999;
+        background-color: #1a1a1a; /* 深いグレー（高級感） */
+        z-index: 99999;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        transition: opacity 1.0s ease-out; /* フワッと消える演出 */
+      }
+      
+      /* ローディングの文字 */
+      #loading-text {
+        color: #f0f0f0;
+        font-size: 14px;
+        letter-spacing: 3px; /* 文字間隔を広げてオシャレに */
+        margin-top: 20px;
+        text-transform: uppercase; /* 全部大文字にする */
+      }
+
+      /* シンプルな読み込みリング */
+      .loader {
+        border: 2px solid rgba(255,255,255,0.1);
+        border-left-color: #ffffff;
+        border-radius: 50%;
+        width: 40px; height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+
+      /* ▼▼▼ 2. 画面下10%のオシャレな枠（フッター） ▼▼▼ */
+      #footer-frame {
+        position: fixed; bottom: 0; left: 0; width: 100%; height: 10%;
+        /* 背景：少し透けた黒（すりガラス風） */
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px); 
+        /* 上の線：細いアクセントライン */
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        
         display: flex; justify-content: center; align-items: center;
-        color: white; font-weight: bold; font-size: 18px;
+        z-index: 9999;
+        pointer-events: none; /* AR操作の邪魔をしない */
+      }
+
+      /* フッター内の文字 */
+      #footer-text {
+        color: #ffffff;
+        font-family: "Helvetica Neue", Arial, sans-serif; /* ここは読みやすいゴシック体 */
+        font-size: 11px;
+        letter-spacing: 1px;
+        opacity: 0.8; /* 少し控えめに */
       }
     </style>
   </head>
   <body>
-    <div id="loading">ARを読み込んでいます...</div>
+
+    <div id="loading">
+      <div class="loader"></div>
+      <div id="loading-text">Loading AR Experience</div>
+    </div>
+
+    <div id="footer-frame">
+      <div id="footer-text">Presented by GPM co.ltd., CLoVER</div>
+    </div>
 
     <a-scene 
       mindar-image="imageTargetSrc: ./targets.mind; uiError:yes; uiLoading:no;" 
@@ -36,24 +89,22 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-image src="#img-pers-1" position="0 0 0" height="1.5" width="1"></a-image>
+        <a-image id="ar-image-1" src="#img-pers-1" position="0 0 0" width="1"></a-image>
 
-        <a-entity position="0 -0.7 0">
-            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 5000; easing: linear; loop: true">
+        <a-entity position="0 -0.6 0">
+            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 6000; easing: linear; loop: true">
                 <a-text value="Miyabe Airi" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
             </a-entity>
         </a-entity>
-
-        <a-entity position="0 -0.9 0">
-            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 5500; easing: linear; loop: true">
+        <a-entity position="0 -0.8 0">
+            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 6500; easing: linear; loop: true">
                  <a-text value="victorina-vc" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
             </a-entity>
         </a-entity>
-
       </a-entity>
 
       <a-entity id="target-pop2" mindar-image-target="targetIndex: 1">
-        <a-video src="#vid-pop2" position="0 0 0" height="1.5" width="1"></a-video>
+        <a-video id="ar-video-1" src="#vid-pop2" position="0 0 0" width="1"></a-video>
       </a-entity>
 
       <a-entity id="target-outside" mindar-image-target="targetIndex: 2">
@@ -72,12 +123,39 @@
       const sceneEl = document.querySelector('a-scene');
 
       sceneEl.addEventListener('arReady', () => {
-        loadingDiv.style.display = 'none';
+        // 読み込み完了時：ローディングをフワッと消す
+        loadingDiv.style.opacity = 0;
+        setTimeout(() => { loadingDiv.style.display = 'none'; }, 1000);
+        
+        // サイズ自動調整を実行
+        resizeElement('ar-image-1', 'img-pers-1');
+        resizeElement('ar-video-1', 'vid-pop2');
       });
 
-      // 2枚目（動画）の制御
+      // 動画制御
       targetPop2.addEventListener('targetFound', () => { videoPop2.play(); });
       targetPop2.addEventListener('targetLost', () => { videoPop2.pause(); });
+
+      // 自動リサイズ関数
+      function resizeElement(arEntityId, sourceId) {
+        const arEntity = document.getElementById(arEntityId);
+        const source = document.getElementById(sourceId);
+
+        const setSize = () => {
+          let w, h;
+          if (source.tagName === 'IMG') { w = source.naturalWidth; h = source.naturalHeight; }
+          else if (source.tagName === 'VIDEO') { w = source.videoWidth; h = source.videoHeight; }
+          
+          if (w && h) {
+            const ratio = h / w;
+            arEntity.setAttribute('height', ratio);
+            console.log(`Resized: ${arEntityId} ratio=${ratio}`);
+          }
+        };
+
+        if (source.complete || source.readyState >= 1) setSize();
+        else { source.onload = setSize; source.onloadedmetadata = setSize; }
+      }
     </script>
   </body>
 </html>
