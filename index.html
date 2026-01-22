@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>町家の日 ARイベント</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+  </head>
+  <body>
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+      
+      <a-assets>
+        <img id="img-pers-1" src="./pers_1.jpg" />
+        <img id="img-pers-2" src="./pers_2.jpg" />
+      </a-assets>
+
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-image 
+            src="#img-pers-1" 
+            position="0 0 0" 
+            height="1" 
+            width="1.5" 
+            opacity="1.0"
+        ></a-image>
+      </a-entity>
+
+      <a-entity mindar-image-target="targetIndex: 1">
+        <a-image 
+            src="#img-pers-2" 
+            position="0 0 0" 
+            height="1" 
+            width="1.5" 
+            opacity="1.0"
+        ></a-image>
+      </a-entity>
+
+      <a-entity mindar-image-target="targetIndex: 2">
+        
+        <a-text 
+            value="THANK YOU!!" 
+            align="center" 
+            color="#FFD700" 
+            position="0 0 0"
+            scale="1.5 1.5 1.5"
+            width="6"
+            animation="property: scale; to: 2.0 2.0 2.0; dir: alternate; dur: 800; loop: true">
+        </a-text>
+
+        <a-text 
+            value="Welcome to Machiya Day" 
+            align="center" 
+            color="#FFFFFF" 
+            position="0 -0.5 0"
+            scale="0.8 0.8 0.8"
+            width="4">
+        </a-text>
+
+        <a-entity 
+            position="0 1 0" 
+            particle-system="
+                preset: default; 
+                color: #EF0000,#00EF00,#0000EF,#FFFF00; 
+                particleCount: 1000; 
+                size: 0.3;
+                velocityValue: 0 1 0;">
+        </a-entity>
+
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
