@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>町家の日 AR（シンプル＆演出強化版）</title>
+    <title>町家の日 AR</title>
     <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
@@ -30,45 +30,37 @@
       
       <a-assets>
         <img id="img-pers-1" src="./pers_1.png" />
-        
         <video id="vid-pop2" src="./fl.mp4" preload="auto" loop="true" crossorigin="anonymous" playsinline webkit-playsinline muted></video>
       </a-assets>
 
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-image src="#img-pers-1" position="0 0 0" height="1" width="1.5"></a-image>
+        <a-image src="#img-pers-1" position="0 0 0" height="1.5" width="1"></a-image>
+
+        <a-entity position="0 -0.7 0">
+            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 5000; easing: linear; loop: true">
+                <a-text value="Miyabe Airi" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
+            </a-entity>
+        </a-entity>
+
+        <a-entity position="0 -0.9 0">
+            <a-entity position="2 0 0" animation="property: position; from: 2 0 0; to: -2 0 0; dur: 5500; easing: linear; loop: true">
+                 <a-text value="victorina-vc" align="center" color="white" scale="1.5 1.5 1.5"></a-text>
+            </a-entity>
+        </a-entity>
+
       </a-entity>
 
       <a-entity id="target-pop2" mindar-image-target="targetIndex: 1">
-        <a-video src="#vid-pop2" position="0 0 0" height="1" width="1.5"></a-video>
+        <a-video src="#vid-pop2" position="0 0 0" height="1.5" width="1"></a-video>
       </a-entity>
 
       <a-entity id="target-outside" mindar-image-target="targetIndex: 2">
-        
         <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 10000; loop: true; easing: linear">
-          
-          <a-text 
-            value="Lykke Hygge" 
-            font="serif"
-            align="center" 
-            color="black" 
-            position="0.03 -0.03 -0.01" 
-            scale="2 2 2"
-            opacity="0.8">
-          </a-text>
-
-          <a-text 
-            value="Lykke Hygge" 
-            font="serif"
-            align="center" 
-            color="white" 
-            position="0 0 0" 
-            scale="2 2 2">
-          </a-text>
-
+          <a-text value="Lykke Hygge" font="serif" align="center" color="black" position="0.03 -0.03 -0.01" scale="2 2 2" opacity="0.8"></a-text>
+          <a-text value="Lykke Hygge" font="serif" align="center" color="white" position="0 0 0" scale="2 2 2"></a-text>
         </a-entity>
-
       </a-entity>
 
     </a-scene>
@@ -79,22 +71,13 @@
       const videoPop2 = document.getElementById('vid-pop2');
       const sceneEl = document.querySelector('a-scene');
 
-      // AR準備完了
       sceneEl.addEventListener('arReady', () => {
         loadingDiv.style.display = 'none';
       });
 
-      // ▼▼▼ 2枚目（動画）の制御 ▼▼▼
-      targetPop2.addEventListener('targetFound', () => {
-        // ボタンがないので自動再生のみ
-        videoPop2.play();
-      });
-
-      targetPop2.addEventListener('targetLost', () => {
-        videoPop2.pause();
-      });
-
-      // 3枚目（外観）の制御はCSSやボタンがなくなったので不要になりました
+      // 2枚目（動画）の制御
+      targetPop2.addEventListener('targetFound', () => { videoPop2.play(); });
+      targetPop2.addEventListener('targetLost', () => { videoPop2.pause(); });
     </script>
   </body>
 </html>
