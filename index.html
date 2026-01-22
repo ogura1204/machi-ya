@@ -7,7 +7,7 @@
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     
     <style>
-      /* HTML側のフォント（待機画面やエンドロール用） */
+      /* HTML側のフォント設定 */
       body { margin: 0; overflow: hidden; font-family: "Yu Mincho", "YuMincho", "Hiragino Mincho ProN", serif; }
 
       /* 待機画面 */
@@ -108,26 +108,29 @@
 
       <a-entity mindar-image-target="targetIndex: 3">
         
-        <a-ring color="#FF69B4" radius-inner="0.6" radius-outer="0.62" rotation="-90 0 0" 
-                animation="property: rotation; to: -90 360 0; dur: 5000; loop: true; easing: linear"></a-ring>
+        <a-ring color="#FFD700" radius-inner="1.1" radius-outer="1.12" opacity="0.6"
+                animation="property: rotation; to: 0 0 360; dur: 20000; loop: true; easing: linear"></a-ring>
+        
+        <a-ring color="#F0E68C" radius-inner="1.0" radius-outer="1.03" opacity="0.8"
+                animation="property: rotation; to: 0 0 -360; dur: 12000; loop: true; easing: linear"></a-ring>
+        
+        <a-torus color="#FFD700" radius="1.06" radius-tubular="0.005" segments-tubular="64" opacity="0.5"
+                 animation="property: rotation; to: 0 0 360; dur: 15000; loop: true; easing: linear"></a-torus>
 
-        <a-entity position="0 0 0" animation="property: rotation; to: 0 360 0; dur: 15000; loop: true; easing: linear">
+        <a-entity position="0 0 0.1">
+            <a-text value="We look forward to\nworking with you."
+                    align="center" color="black" position="0.02 -0.02 0" scale="0.7 0.7 0.7" opacity="0.7"></a-text>
+            <a-text value="We look forward to\nworking with you."
+                    align="center" color="#FFD700" position="0 0 0.01" scale="0.7 0.7 0.7"></a-text>
             
-            <a-entity position="0 0 0.7">
-                <a-text value="We look forward to working with you."
-                        font="exo2" align="center" color="black" position="0.02 -0.02 -0.01" scale="0.65 0.65 0.65" opacity="0.6"></a-text>
-                <a-text value="We look forward to working with you."
-                        font="exo2" align="center" color="#FFD700" position="0 0 0" scale="0.65 0.65 0.65"></a-text>
-            </a-entity>
-
-            <a-entity position="0 0 -0.7" rotation="0 180 0">
+            <a-entity position="0 -0.4 0">
                 <a-text value="GPM Co., Ltd. / Sousuke Ogura"
-                        font="exo2" align="center" color="black" position="0.02 -0.02 -0.01" scale="0.8 0.8 0.8" opacity="0.6"></a-text>
+                        align="center" color="black" position="0.02 -0.02 0" scale="0.5 0.5 0.5" opacity="0.7"></a-text>
                 <a-text value="GPM Co., Ltd. / Sousuke Ogura"
-                        font="exo2" align="center" color="#FFD700" position="0 0 0" scale="0.8 0.8 0.8"></a-text>
+                        align="center" color="#FFD700" position="0 0 0.01" scale="0.5 0.5 0.5"></a-text>
             </a-entity>
-
         </a-entity>
+
       </a-entity>
 
     </a-scene>
