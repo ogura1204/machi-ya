@@ -2,13 +2,35 @@
 <html>
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>町家の日 ARイベント</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <title>町家の日 ARイベント（診断モード）</title>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     <script src="https://unpkg.com/aframe-particle-system-component@1.0.x/dist/aframe-particle-system-component.min.js"></script>
+    
+    <style>
+      /* エラーが出た時に表示する場所 */
+      #error-log {
+        position: fixed; top: 10px; left: 10px; z-index: 9999;
+        background: rgba(255, 0, 0, 0.8); color: white; padding: 10px;
+        display: none; border-radius: 5px; font-size: 14px;
+      }
+      /* 読み込み中の表示 */
+      #loading {
+        position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        color: white; font-weight: bold; font-size: 20px; z-index: 999;
+      }
+    </style>
   </head>
   <body>
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <div id="error-log"></div>
+    <div id="loading">読み込み中...<br>(カメラを許可してください)</div>
+
+    <a-scene 
+      mindar-image="imageTargetSrc: ./targets.mind; uiError:yes; uiLoading:no;" 
+      color-space="sRGB" 
+      renderer="colorManagement: true, physicallyCorrectLights" 
+      vr-mode-ui="enabled: false" 
+      device-orientation-permission-ui="enabled: false">
       
       <a-assets>
         <img id="img-pers-1" src="./pers_1.png" />
@@ -18,57 +40,45 @@
       <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
 
       <a-entity mindar-image-target="targetIndex: 0">
-        <a-image 
-            src="#img-pers-1" 
-            position="0 0 0" 
-            height="1" 
-            width="1.5" 
-            opacity="1.0"
-        ></a-image>
+        <a-image src="#img-pers-1" position="0 0 0" height="1" width="1.5"></a-image>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 1">
-        <a-image 
-            src="#img-pers-2" 
-            position="0 0 0" 
-            height="1" 
-            width="1.5" 
-            opacity="1.0"
-        ></a-image>
+        <a-image src="#img-pers-2" position="0 0 0" height="1" width="1.5"></a-image>
       </a-entity>
 
       <a-entity mindar-image-target="targetIndex: 2">
-        
-        <a-text 
-            value="THANK YOU!!" 
-            align="center" 
-            color="#FFD700" 
-            position="0 0 0"
-            scale="1.5 1.5 1.5"
-            width="6"
-            animation="property: scale; to: 2.0 2.0 2.0; dir: alternate; dur: 800; loop: true">
-        </a-text>
-
-        <a-text 
-            value="Welcome to Machiya Day" 
-            align="center" 
-            color="#FFFFFF" 
-            position="0 -0.5 0"
-            scale="0.8 0.8 0.8"
-            width="4">
-        </a-text>
-
-        <a-entity 
-            position="0 1 0" 
-            particle-system="
-                preset: default; 
-                color: #EF0000,#00EF00,#0000EF,#FFFF00; 
-                particleCount: 1000; 
-                size: 0.3;
-                velocityValue: 0 1 0;">
-        </a-entity>
-
+        <a-text value="THANK YOU!!" align="center" color="#FFD700" position="0 0 0" scale="1.5 1.5 1.5"
+          animation="property: scale; to: 2.0 2.0 2.0; dir: alternate; dur: 800; loop: true"></a-text>
+        <a-entity position="0 1 0" particle-system="preset: default; color: #EF0000,#00EF00,#0000EF; particleCount: 1000; size: 0.3;"></a-entity>
       </a-entity>
+
     </a-scene>
+
+    <script>
+      // エラーを画面に表示する仕組み
+      const sceneEl = document.querySelector('a-scene');
+      const errorDiv = document.getElementById('error-log');
+      const loadingDiv = document.getElementById('loading');
+
+      // 読み込み完了時
+      sceneEl.addEventListener('arReady', (event) => {
+        loadingDiv.style.display = 'none';
+        console.log("AR Ready");
+      });
+
+      // エラー発生時
+      sceneEl.addEventListener('arError', (event) => {
+        loadingDiv.style.display = 'none';
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = "エラー発生:<br>" + event.detail.error;
+      });
+
+      // 画像が見つからない場合などのエラー
+      window.addEventListener('error', (event) => {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML += "<br>ファイル読込エラー: " + event.message;
+      });
+    </script>
   </body>
 </html>
